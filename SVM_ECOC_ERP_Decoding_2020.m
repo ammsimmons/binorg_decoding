@@ -15,7 +15,8 @@ function SVM_ECOC_ERP_Decoding(subs)
 
 if nargin ==0
     
-    subs = [505];
+    subs = [505, 506, 507, 508, 509, 510, 512, 514, 516, 517, 519, ...
+    520, 523, 524, 525];
     
 end
 
@@ -24,9 +25,7 @@ nSubs = length(subs);
 
 % parameters to set
 
-svmECOC.nChans = 16; % # of channels
-
-svmECOC.nBins = svmECOC.nChans; % # of stimulus bins
+svmECOC.nBins = 16; % # of stimulus bins
 
 svmECOC.nIter = 10; % # of iterations
 
@@ -50,7 +49,6 @@ svmECOC.nElectrodes = length(ReleventChan); % # of electrode included in the ana
 
 % for brevity in analysis
 
-nChans = svmECOC.nChans;
 
 nBins = svmECOC.nBins;
 
@@ -98,14 +96,14 @@ for s = 1:nSubs
     
     % Preallocate Matrices
     
-    svm_predict = nan(nIter,nSamps,nBlocks,nChans); % a matrix to save prediction from SVM
-    tst_target = nan(nIter,nSamps,nBlocks,nChans);  % a matrix to save true target values
+    svm_predict = nan(nIter,nSamps,nBlocks,nBins); % a matrix to save prediction from SVM
+    tst_target = nan(nIter,nSamps,nBlocks,nBins);  % a matrix to save true target values
     
     % create svmECOC.block structure to save block assignments
     svmECOC.blocks=struct();
     
-    if nChans ~= max(size(eegs))
-        error('Error. nChans dne # of bins in dataset!');
+    if nBins ~= max(size(eegs))
+        error('Error. nBins dne # of bins in dataset!');
         % Code to be used on a bin-epoched dataset for one
         % class only (e.g. Orientation). Users may
         % try to bin multiple classes in one BDF.
@@ -125,7 +123,7 @@ for s = 1:nSubs
         blockNum = nan(nBins*nBlocks,1);   % block numbers for averaged & filtered EEG data
         bCnt = 1; %initialize binblock counter 
         
-        for bin = 1:nChans
+        for bin = 1:nBins
             
             % We will use as many possible trials per
             % bin having accounted already for artifacts
