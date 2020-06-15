@@ -1,7 +1,9 @@
 # binorg_decoding
 Bin-Organized Decoding (J. Neuro: Bae&amp;Luck, 2018). 
 
-Here you will find an updated version of Bae & Luck (2018) analysis scripts.  We have updated the scripts to allow the use of bin-organized decoding, therefore allowing users to use EEGlab/ERPlab to format and decode their own data more seamlessly. 
+Here you will find an updated version of Bae & Luck (2018) analysis scripts.  We have updated the scripts to allow the use of bin-organized decoding, therefore allowing users to use EEGlab/ERPlab* to format and decode their own data more seamlessly. 
+
+*ERPlab Version V8.1 REQUIRED
 
 Order of Operations:
 1. Decoding_binOrg.m
