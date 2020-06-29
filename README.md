@@ -7,7 +7,7 @@ Here you will find an updated version of Bae & Luck (2018) analysis scripts.  We
 Download ERPLAB here: https://github.com/lucklab/erplab/releases/download/8.01/erplab8.01.zip
 
 **Decoding Scripts** 
-The decoding scripts used for the online webinar are found in this .zip file: https://github.com/ammsimmons/binorg_decoding/archive/master.zip
+The MATLAB scripts used for the online webinar are found in this .zip file: https://github.com/ammsimmons/binorg_decoding/archive/master.zip
 
 Order of Operations:
 1. Decoding_binOrg.m
@@ -20,6 +20,6 @@ https://ucdavis.box.com/s/aecglu8zqox52nc94f5jywj9mxktbf57
 Again, data used on our Decoding Webinar (2020) can be found at:
 https://ucdavis.box.com/s/aecglu8zqox52nc94f5jywj9mxktbf57
 
-**BAE & LUCK 2018 Scripts** 
-Bae & Luck's original decoding scripts can be found here:
-https://osf.io/bpexa/
+Background: 
+The scripts we use are an updated version of those found in Bae & Luck (2018). If you wish to see those on OSF, see them on this link https://osf.io/bpexa/ 
+Our scripts above are much simpler to use for your own data than these original 2018 scripts. 
