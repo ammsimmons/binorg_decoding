@@ -3,27 +3,44 @@
 % Refer to OSF: https://osf.io/29wre/
 
 % NOTE: low-pass filtering to 6hz was applied to continuous EEG (prior to
-% binning)
+% binning). % Code to be used on a bin-epoched dataset for one
+% class only (e.g. Orientation)
 
+% NOTE: This script requires 'fitcecoc' Matlab function. 
 
-% Edited by Aaron Simmons
-
+%Edited by Aaron Simmons (UC Davis)
+%Original Author: Gi-Yeul Bae (Arizona State University)
 
 function SVM_ECOC_ERP_Decoding(subs)
-% delete(gcp)
-% parpool
 
+% Parallelization: This script utilizes Matlab parallelization ...
+% if parallelization is not possible, change "parfor" to "for-loop"
+delete(gcp)
+parpool
+
+
+%% Subject List: 
 if nargin ==0
     
-    subs = [505, 506, 507, 508, 509, 510, 512, 514, 516, 517, 519, ...
-    520, 523, 524, 525];
+     subs = [505, 506, 507, 508, 509, 510, 512, 514, 516, 517, 519, 520, 521, 523, 524, 525];
     
 end
 
-nSubs = length(subs);
+nSubs = length(subs); %number of subjects
+
+%% Subject Filename(s)
+
+% Load Subject Datafiles 
+dataLocation = pwd; % set directory of data set (default: pwd)
+fName = ['/Decoding_BE_']; % subject filename (subject # appended at end)
+
+% Save Decoding results
+saveLocation = pwd; % set save directory of data set (default: pwd)
+savName = ['/Orientation_Results_ERPbased_']; 
 
 
-% parameters to set
+%% Parameters to set
+% Main structure is svmECOC. The output file is composed of svmECOC struct
 
 svmECOC.nBins = 16; % # of stimulus bins
 
@@ -31,32 +48,36 @@ svmECOC.nIter = 10; % # of iterations
 
 svmECOC.nBlocks = 3; % # of blocks for cross-validation
 
-svmECOC.frequencies = [0 6]; % low pass filter
-
 svmECOC.dataTime.pre = -500; % Set epoch start (from imported data)
 svmECOC.dataTime.post = 1496; % Set epoch end (from imported data)
 
 svmECOC.time = -500:20:1496; % time points of interest in the analysis
+% the time-points of interest is a resampling of preprocessed data
+% the time steps (20ms) here change the data to 1 data point per 20ms
 
+% Timepoints/sampling rate of preprocessed/loaded data
 svmECOC.window = 4; % 1 data point per 4 ms in the preprocessed data
-
 svmECOC.Fs = 250; % samplring rate of in the preprocessed data for filtering
 
-ReleventChan = sort([2,3,4,18,19, 5,6,20, 7,8,21, 9,10,11,12,13,14, 22,23,24,25,26,27, 15,16,1,17]); %electrodes
+% Equalalize trials across bins? 
+equalT = 1; % equal trials acr bin = 1; use as many trials within bin = 0
+
+% The electrode channel list is mapped 1:1 with respect to your 
+% electrode channel configuration (e.g., channel 1 is FP1 in our EEG cap)
+% Check if the label for each electrode corresponds to the electrode
+% labeling of your own EEG system
+ReleventChan = sort([2,3,4,18,19, 5,6,20, 7,8,21,9,10,11,12,13,14, 22,23,24,25,26,27, 15,16,1,17]); %electrodes
+% here, we removed external EOG electrodes & mastoid ref, for 27 electrodes
 
 svmECOC.nElectrodes = length(ReleventChan); % # of electrode included in the analysis
 
 
 % for brevity in analysis
-
-
 nBins = svmECOC.nBins;
 
 nIter = svmECOC.nIter;
 
 nBlocks = svmECOC.nBlocks;
-
-freqs = svmECOC.frequencies;
 
 dataTime = svmECOC.dataTime;
 
@@ -66,36 +87,39 @@ nElectrodes = svmECOC.nElectrodes;
 
 nSamps = length(svmECOC.time);
 
-Fs = svmECOC.Fs;
 
-%% Loop through participants
-for s = 1:nSubs
+%% Step 9: Loop through participants
+for s = 1:nSubs %decoding is performed within each subject independently
     sn = subs(s);
     
+    %progress output to command window
     fprintf('Subject:\t%d\n',sn)
     
-    % load data
+    %% Parameters to set per subject 
     currentSub = num2str(sn);
-    dataLocation = pwd; % set directory of data set
-    loadThis = strcat(dataLocation,'/Decoding_',currentSub,'_BE.mat');
-    load(loadThis)
+    loadThis = strcat(dataLocation,fName,currentSub,'.mat');
     
-    % where to save decoding output
-    saveLocation = pwd; % set directory for decoding results.
+    % where to save decoding output file name. 
+    % File (.mat) will contain decoding results.
+    OutputfName = strcat(saveLocation,savName,currentSub,'.mat');
+    
+    
+    %% Data Loading/preallocation per subject 
+    % loads bin_organized data
+    load(loadThis)
     
     % grab EEG data from bin-list organized data 
     eegs = binorgEEG.binwise_data;
     nPerBin = binorgEEG.n_trials_this_bin;
     
     % set up time points
-    tois = ismember(dataTime.pre:4:dataTime.post,svmECOC.time); nTimes = length(tois);
+    % we create index of timpoint of interests from original data
+    tois = ismember(dataTime.pre:4:dataTime.post,svmECOC.time); 
     
     % # of trials
-    svmECOC.nTrials = (sum(nPerBin)); nTrials = svmECOC.nTrials;
-    
+    svmECOC.nTrials = (sum(nPerBin)); 
     
     % Preallocate Matrices
-    
     svm_predict = nan(nIter,nSamps,nBlocks,nBins); % a matrix to save prediction from SVM
     tst_target = nan(nIter,nSamps,nBlocks,nBins);  % a matrix to save true target values
     
@@ -111,44 +135,73 @@ for s = 1:nSubs
     end
     
     
-    % Loop through each iteration
+    %% Step 8: Loop through each iteration with random shuffling
     tic % start timing iteration loop
     
     for iter = 1:nIter
-
-        %using bin-epoched datasets 
-        %preallocate      
+        
+        %% Obtaining AVG. EEG (ERP spatial dist) 
+        % within each block at each time point 
+        % stored in blockDat_filtData
+        
+        %preallocate & rewrite per each iteration      
         blockDat_filtData = nan(nBins*nBlocks,nElectrodes,nSamps);   
         labels = nan(nBins*nBlocks,1);     % bin labels for averaged & filtered EEG data
         blockNum = nan(nBins*nBlocks,1);   % block numbers for averaged & filtered EEG data
         bCnt = 1; %initialize binblock counter 
         
-        for bin = 1:nBins
+        % this code operates and creates ERPs at each bin 
+        % and organizes that into approprate block 
+        
+        %% shuffling, binning, & averaging
+        for bin = 1:nBins 
             
-            % We will use as many possible trials per
-            % bin having accounted already for artifacts
-            
-            %Drop excess trials 
-            nPerBlock = floor(nPerBin/nBlocks); %array for nPerBin
-            
-            %Obtain index within each shuffled bin
-            shuffBin = randperm((nPerBlock(bin))*nBlocks)';
-            
-            %Preallocate arrays
-            
-            blocks = nan(size(shuffBin));
-            shuffBlocks = nan(size(shuffBin));
-            
-            %arrage block order within bins
-            x = repmat((1:nBlocks)',nPerBlock(bin),1);
-            shuffBlocks(shuffBin) = x;
+            if equalT == 1 %equal trials across bins 
+                % find bin with fewest trial
+                minCnt = min(nPerBin);
+                
+                % max # of trials such that # of trials for each bin ...
+                % can be equated within each block 
+                nPerBinBlock = floor(minCnt/nBlocks); 
+                
+                %Obtain index within each shuffled bin
+                shuffBin = randperm((nPerBinBlock*nBlocks))';
+                
+                %Preallocate arrays               
+                blocks = nan(size(shuffBin));
+                shuffBlocks = nan(size(shuffBin));
+                
+                %arrage block order within bins
+                x = repmat((1:nBlocks)',nPerBinBlock,1);
+                shuffBlocks(shuffBin) = x;
+                
+                
+            else 
+                % We will use as many possible trials per
+                % bin having accounted already for artifacts
+                
+                %Drop excess trials
+                nPerBinBlock = floor(nPerBin/nBlocks); %array for nPerBin
+                
+                %Obtain index within each shuffled bin
+                shuffBin = randperm((nPerBinBlock(bin))*nBlocks)';
+                
+                %Preallocate arrays
+                
+                blocks = nan(size(shuffBin));
+                shuffBlocks = nan(size(shuffBin));
+                
+                %arrage block order within bins
+                x = repmat((1:nBlocks)',nPerBinBlock(bin),1);
+                shuffBlocks(shuffBin) = x;
+            end
             
             %unshuffled block assignment
             blocks(shuffBin) = shuffBlocks;
             
             % save block assignment
             blockID = ['iter' num2str(iter) 'bin' num2str(bin)];
-            
+           
             svmECOC.blocks.(blockID) = blocks; % block assignment
             
             
@@ -156,11 +209,16 @@ for s = 1:nSubs
             %grab current bin with correct # of electrodes & samps
             eeg_now = eegs(bin).data(ReleventChan,:,:);
             
+            %here, we create blockDat_filtData. 
+            %this results in nBins*nBlocks amount of ERP spatial
+            %distributions (across nChans) at each sample/timepoint
+            
+            %% Step 1: computing ERPs based on random subset of trials for each block 
             for bl = 1:nBlocks
                 
                 blockDat_filtData(bCnt,:,:) = squeeze(mean(eeg_now(:,tois,blocks==bl),3));
                 
-                labels(bCnt) = bin;
+                labels(bCnt) = bin; %used for arranging classification obj.
                 
                 blockNum(bCnt) = bl;
                 
@@ -170,22 +228,23 @@ for s = 1:nSubs
             
         end
         
-        
+
+        %% Step 7: Loop through each timepoint 
         % Do SVM_ECOC at each time point
         parfor t = 1:nSamps
             
             % grab data for timepoint t
-            
             toi = ismember(times,times(t)-svmECOC.window/2:times(t)+svmECOC.window/2);
             
             % average across time window of interest
-            
+            % here, you can parse nBin*nBlock across all channels (ERP spatial dist) 
             dataAtTimeT = squeeze(mean(blockDat_filtData(:,:,toi),3));
             
-            % Do SVM_ECOC for each block
+            %% Step 6: Cross-validation for-loop 
             for i=1:nBlocks % loop through blocks, holding each out as the test set
                 
                 
+                %% Step 2 & Step 4: Assigning training and testing data sets
                 trnl = labels(blockNum~=i); % training labels
                 
                 tstl = labels(blockNum==i); % test labels
@@ -194,9 +253,9 @@ for s = 1:nSubs
                 
                 tstD = dataAtTimeT(blockNum==i,:);    % test data
                 
-                % SVM_ECOC
+                %% Step 3: Training 
                 mdl = fitcecoc(trnD,trnl, 'Coding','onevsall','Learners','SVM' );   %train support vector mahcine
-                
+                %% Step 5: Testing
                 LabelPredicted = predict(mdl, tstD);       % predict classes for new data
                 
                 svm_predict(iter,t,i,:) = LabelPredicted;  % save predicted labels
@@ -204,23 +263,19 @@ for s = 1:nSubs
                 tst_target(iter,t,i,:) = tstl;             % save true target labels
                 
                 
-            end % end of block
+            end % end of block: Step 6: cross-validation
             
-        end % end of time points
+        end % end of time points: Step 7: Decoding each time point
         
-    end % end of iteration
+    end % end of iteration: Step 8: iteration with random shuffling
     
     toc % stop timing the iteration loop
     
-    
-    
-    OutputfName = strcat(saveLocation,'/Orientation_Results_ERPbased_',currentSub,'.mat');
-    
+    %output decoding results in main svmECOC structure
     svmECOC.targets = tst_target;
-    svmECOC.modelPredict = svm_predict;
-    
+    svmECOC.modelPredict = svm_predict;    
     svmECOC.nBlocks = nBlocks;
     
     save(OutputfName,'svmECOC','-v7.3');
     
-end % end of subject loop
+end % end of subject loop: Step 9: Decoding for each participant 
