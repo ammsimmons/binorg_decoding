@@ -14,7 +14,9 @@ Order of Operations:
 2. SVM_ECOC_ERP_Decoding_2020.m \
 	--See Below for Link to Data on Box:
 https://ucdavis.box.com/s/aecglu8zqox52nc94f5jywj9mxktbf57
-3. SVM_ECOC_Stat_Plot_Permutation_2020.m 
+3. SVM_ECOC_Stat_Plot_Permutation_2020.m \
+-- Required: "boundedline.m" & "inpaint_nans.m" (Kearney, 2020) \
+-- See here: https://www.mathworks.com/matlabcentral/fileexchange/27485-boundedline-m
 4. SVM_ECOC_ERP_PermutationTesting_2020.m
 
 Again, data used on our Decoding Webinar (2020) can be found at:

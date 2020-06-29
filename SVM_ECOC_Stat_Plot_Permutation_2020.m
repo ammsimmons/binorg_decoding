@@ -4,7 +4,8 @@
 % In order to perform cluster-based permutation analysis, users must have
 % already simulated null-distribution to test against. See
 % "SVM_ECOC_ERP_PermutationTesting_revised.". Plot function requires matlab
-% function "boundedline" (Kearny 2020) in working directory. 
+% function "boundedline" & "inpaint_nans" (Kearny 2020) in working directory. 
+% see here: https://www.mathworks.com/matlabcentral/fileexchange/27485-boundedline-m
 
 % Edited by Aaron Simmons (UC Davis)
 % Original Author: Gi-Yeul Bae (Arizona State University)
@@ -36,7 +37,7 @@ releventTime = 37:100; % corresponds to [220, 1480] ms
 
 % Individual subject filenames
 fileLocation = pwd; 
-fName = ['/Processed/Orientation_Results_ERPbased_']; 
+fName = ['Processed/Orientation_Results_ERPbased_']; 
 
 
 %% Plotting Decoding Results (no stats)
@@ -53,8 +54,7 @@ for sub = 1:Nsub
     % enter DecodingAccuracy into AverageAccuray, then overwrite next subj.
     
     %% load SVM_ECOC output files
-    fileLocation = pwd;
-    readThis =strcat(fileLocation,fName,num2str(subList(sub)),'.mat');
+    readThis =strcat(fileLocation,filesep,fName,num2str(subList(sub)),'.mat');
     load(readThis)
      
     % Obtain predictions from SVM-ECOC model
