@@ -3,13 +3,13 @@ Bin-Organized Decoding (J. Neuro: Bae&amp;Luck, 2018).
 
 Here you will find an updated version of Bae & Luck (2018) analysis scripts.  We have updated the scripts to allow the use of bin-organized decoding, therefore allowing users to use EEGlab/ERPlab* to format and decode their own data more seamlessly. 
 
-*ERPlab Version V8.1 REQUIRED
+**ERPlab Version V8.1 REQUIRED**
 
 Order of Operations:
 1. Decoding_binOrg.m
 2. SVM_ECOC_ERP_Decoding_2020.m
-3. SVM_ECOC_Stat_Plot_Permutation.m (on OSF)
-4. SVM_ECOC_ERP_PermutationTesting.m (on OSF)
+3. SVM_ECOC_Stat_Plot_Permutation_2020.m 
+4. SVM_ECOC_ERP_PermutationTesting_2020.m
 
 The original analysis scripts and data can be found on OSF: 
 https://osf.io/bpexa/
