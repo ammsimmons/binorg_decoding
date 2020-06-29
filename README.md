@@ -20,6 +20,6 @@ https://ucdavis.box.com/s/aecglu8zqox52nc94f5jywj9mxktbf57
 Again, data used on our Decoding Webinar (2020) can be found at:
 https://ucdavis.box.com/s/aecglu8zqox52nc94f5jywj9mxktbf57
 
-** BAE & LUCK 2018 Scripts ** 
+**BAE & LUCK 2018 Scripts** 
 Bae & Luck's original decoding scripts can be found here:
 https://osf.io/bpexa/
