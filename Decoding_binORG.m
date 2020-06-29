@@ -3,7 +3,9 @@
 % Creates bin-organized .mat files for Decoding
 % Writes .mat files to current working directory
 
-% Place original EEGlab datasets in current working directory
+% Place continuous BE datasets (.set & .fdt) in current working directory
+% Examples of these kind of data can be found on box: 
+% https://ucdavis.box.com/s/jrd9zus448nkc0wjkjf1x5nxbc7oxwg8
 
 % by Aaron M. Simmons, University of California, Davis
 
@@ -22,20 +24,18 @@ for s = 1:numsubjects
     fprintf('\n\n\n*** Processing subject %d (%s) ***\n\n\n', s, num2str(subject));
     
     %Initialize EEG
-    [ALLEEG EEG CURRENTSET ALLCOM] = eeglab;
+    eeglab;
     
     %load data
     EEG = pop_loadset('filename', [num2str(subject) '_binned_be.set'], 'filepath', subjectfolder);
-    [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 1, 'setname', [num2str(subject)], 'gui', 'off');
     
     %use binorg-EEG function (this function is only on ERPlab V8.1)
     binepEEG_to_binorgEEG(EEG, ['Decoding_BE_' num2str(subject)]); 
-    %writes to current directory 
+    % Produces bin-organized .mat file and outputs file into current working directory
+    % it will be called "Decoding_BE_XXX" as specified in string filename
    
     close all;
-    clear eeglab;
+    clear EEG;
     
 end
 
-eeglab redraw;
-erplab redraw;
