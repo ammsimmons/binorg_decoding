@@ -6,8 +6,8 @@ Here you will find an updated version of Bae & Luck (2018) analysis scripts.  We
 **ERPLAB Version V8.01 REQUIRED** 
 Download ERPLAB here: https://github.com/lucklab/erplab/releases/download/8.01/erplab8.01.zip
 
-Link to download scripts: 
-https://github.com/ammsimmons/binorg_decoding/archive/master.zip
+**Decoding Scripts** 
+The decoding scripts used for the online webinar are found in this .zip file: https://github.com/ammsimmons/binorg_decoding/archive/master.zip
 
 Order of Operations:
 1. Decoding_binOrg.m
