@@ -12,13 +12,14 @@ The decoding scripts used for the online webinar are found in this .zip file: ht
 Order of Operations:
 1. Decoding_binOrg.m
 2. SVM_ECOC_ERP_Decoding_2020.m
--- See Below for Link to Data on Box:
+	--See Below for Link to Data on Box:
 https://ucdavis.box.com/s/aecglu8zqox52nc94f5jywj9mxktbf57
 3. SVM_ECOC_Stat_Plot_Permutation_2020.m 
 4. SVM_ECOC_ERP_PermutationTesting_2020.m
 
-The original analysis scripts and data can be found on OSF: 
-https://osf.io/bpexa/
-
 Again, data used on our Decoding Webinar (2020) can be found at:
 https://ucdavis.box.com/s/aecglu8zqox52nc94f5jywj9mxktbf57
+
+** BAE & LUCK 2018 Scripts ** 
+Bae & Luck's original decoding scripts can be found here:
+https://osf.io/bpexa/
