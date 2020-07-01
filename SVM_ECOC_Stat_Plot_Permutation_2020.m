@@ -26,7 +26,7 @@ Nitr = 10; % iteration
 Ntp = 100; % # of time points
 NBins = 16; % # of stimulus bins 
 
-% Stats (see "Plot Significant Clusters" for resulting plot formatting)
+% Stats (see "Plot Significant Clusters" (line 204) for resulting plot formatting)
 ClusterMassAnalysis = 0; % 0 = do not perform / 1 = perform
 NPermutations = 10000; % N permutations of null distribution
 chancelvl = 1/NBins; %chance lvl of avg. decoding
@@ -192,7 +192,7 @@ if ClusterMassAnalysis == 1
     
     
     %% note: Load Simulation tests (simulation takes very long time)
-    load('Permutation_Orientation_onetailed_Exp1.mat')
+    load('Permuted_T_mass.mat')
     
     
     %% find critical t-value
@@ -230,10 +230,10 @@ if ClusterMassAnalysis == 1
     ax.YTick = [0,0.02,0.04,0.06,0.08,0.10,0.12,0.14];
     ax.XTick = [1 26 51 76 100];
     ax.XTickLabel = {'-500','0','500','1000','1500'};
-    h = line(1:length(tm),0.0625* ones(1,Ntp));
+    h = line(1:length(tm),chancelvl* ones(1,Ntp));
     h.LineStyle = '--';
     h.Color = [0.1,0.1,0.1];
     hold off
     
-    saveas(figure(1),'Orientation_ERP_Permutation','pdf')
+    saveas(figure(2),'plot_decoding_accuracy_with_stat','pdf')
 end

@@ -44,7 +44,7 @@ fileLocation = pwd;
 fName = ['/Orientation_Results_ERPbased_']; 
 
 % Save Filename (saves .mat file to current directory)
-saveName = ['Permutation_Orientation_onetailed_Exp1_ERP.mat']
+saveName = ['Permuted_T_mass.mat'];
 
 tic
 
