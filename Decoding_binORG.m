@@ -14,7 +14,7 @@ close all;
 
 
 parentfolder = pwd; 
-subject_list = {505, 506, 507, 508, 509, 510, 512, 514, 516, 517, 519, 520, 523, 524, 525};
+subject_list = {505, 506, 507, 508, 509, 510, 512, 514, 516, 517, 519, 520, 521, 523, 524, 525};
 numsubjects = length(subject_list);
 
 
