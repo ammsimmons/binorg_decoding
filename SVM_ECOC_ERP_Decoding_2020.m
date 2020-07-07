@@ -75,6 +75,8 @@ svmECOC.nElectrodes = length(ReleventChan); % # of electrode included in the ana
 % for brevity in analysis
 nBins = svmECOC.nBins;
 
+ogWin = svmECOC.window;
+
 nIter = svmECOC.nIter;
 
 nBlocks = svmECOC.nBlocks;
@@ -114,7 +116,7 @@ for s = 1:nSubs %decoding is performed within each subject independently
     
     % set up time points
     % we create index of timpoint of interests from original data
-    tois = ismember(dataTime.pre:4:dataTime.post,svmECOC.time); 
+    tois = ismember(dataTime.pre:ogWin:dataTime.post,svmECOC.time); 
     
     % # of trials
     svmECOC.nTrials = (sum(nPerBin)); 
