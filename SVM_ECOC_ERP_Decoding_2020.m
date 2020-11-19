@@ -6,7 +6,8 @@
 % binning). % Code to be used on a bin-epoched dataset for one
 % class only (e.g. Orientation)
 
-% NOTE: This script requires 'fitcecoc' Matlab function. 
+% NOTE: This script requires the 'fitcecoc' Matlab function. This function is a
+% part of the Matlab Statistics and Machine Learning toolbox.
 
 %Edited by Aaron Simmons (UC Davis)
 %Original Author: Gi-Yeul Bae (Arizona State University)
@@ -17,6 +18,14 @@ function SVM_ECOC_ERP_Decoding(subs)
 % if parallelization is not possible, change "parfor" to "for-loop"
 delete(gcp)
 parpool
+
+%% Check presence of Matlab Statistics and Machine Learning Toolbox
+% This toolbox is required for the SVM classification
+V = ver; 
+Vname = {V.Name}; 
+if ~(any(strcmp(Vname, 'Statistics and Machine Learning Toolbox')))
+    error('Error. Statistics and Machine Learning toolbox not found.');
+end
 
 
 %% Subject List: 
